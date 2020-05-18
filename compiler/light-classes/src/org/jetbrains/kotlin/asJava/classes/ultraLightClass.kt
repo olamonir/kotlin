@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import java.util.concurrent.ConcurrentHashMap
 
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
     KtLightClassImpl(classOrObject) {
@@ -265,24 +266,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
-            when (declaration) {
-                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, forceStatic = false))
-                is KtProperty -> result.addAll(
-                    membersBuilder.propertyAccessors(declaration, declaration.isVar, forceStatic = false, onlyJvmStatic = false)
-                )
-            }
+            getAccessors(declaration)?.let { result.addAll(it) }
         }
 
         for (parameter in propertyParameters()) {
-            result.addAll(
-                membersBuilder.propertyAccessors(
-                    parameter,
-                    parameter.isMutable,
-                    forceStatic = false,
-                    onlyJvmStatic = false,
-                    createAsAnnotationMethod = isAnnotationType
-                )
-            )
+            getAccessors(parameter)?.let { result.addAll(it) }
         }
 
         if (!isInterface) {
@@ -291,18 +279,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
-                when (declaration) {
-                    is KtNamedFunction ->
-                        if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration, forceStatic = true))
-                    is KtProperty -> result.addAll(
-                        membersBuilder.propertyAccessors(
-                            declaration,
-                            declaration.isVar,
-                            forceStatic = false,
-                            onlyJvmStatic = true
-                        )
-                    )
-                }
+                getAccessors(declaration)?.let { result.addAll(it) }
             }
         }
 
@@ -492,4 +469,42 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         return super.getTextRange()
     }
+
+    private val _accessors = ConcurrentHashMap<KtDeclaration, List<KtLightMethod>>()
+
+    fun getAccessors(declaration: KtDeclaration): List<KtLightMethod>? =
+        _accessors.getOrPut(declaration) {
+            var companionOrigin = false
+            if (classOrObject.declarations.indexOf(declaration) < 0 && classOrObject.primaryConstructorParameters.indexOf(declaration) < 0) {
+                if (classOrObject.companionObjects.firstOrNull()?.declarations?.indexOf(declaration) ?: -1 < 0)
+                    // no declaration has been found in the class
+                    return null
+                else
+                    companionOrigin = true
+            }
+
+            val result = mutableListOf<KtLightMethod>()
+            when (declaration) {
+                is KtNamedFunction -> if (companionOrigin && isJvmStatic(declaration))
+                    result.addAll(membersBuilder.createMethods(declaration, forceStatic = true))
+                else
+                    result.addAll(membersBuilder.createMethods(declaration, forceStatic = false))
+                is KtProperty -> result.addAll(
+                    membersBuilder.propertyAccessors(
+                        declaration,
+                        declaration.isVar,
+                        forceStatic = false,
+                        onlyJvmStatic = companionOrigin
+                    )
+                )
+                is KtParameter -> membersBuilder.propertyAccessors(
+                    declaration,
+                    declaration.isMutable,
+                    forceStatic = false,
+                    onlyJvmStatic = false,
+                    createAsAnnotationMethod = isAnnotationType
+                )
+            }
+            result
+        }
 }
