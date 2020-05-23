@@ -232,7 +232,7 @@ internal class InsertImplicitCasts(
         typeTranslator.buildWithScope(declaration) {
             declaration.transformPostfix {
                 valueParameters.forEach {
-                    it.defaultValue?.coerceInnerExpression(it.descriptor.type)
+                    it.defaultValue?.coerceInnerExpression(it.wrappedDescriptor.type)
                 }
             }
         }
@@ -375,7 +375,7 @@ internal class InsertImplicitCasts(
         val returnTypeFromOriginalExpected = originalExpectedType.getFunctionReturnTypeOrNull()
 
         if (returnTypeFromOriginalExpected?.isTypeParameter() != true) {
-            expectedFunctionExpressionReturnType[function.descriptor] = returnTypeFromExpected.toIrType()
+            expectedFunctionExpressionReturnType[function.wrappedDescriptor] = returnTypeFromExpected.toIrType()
         }
     }
 
