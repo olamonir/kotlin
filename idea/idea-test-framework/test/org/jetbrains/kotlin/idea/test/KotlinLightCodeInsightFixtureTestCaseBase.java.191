@@ -107,4 +107,8 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
         //noinspection Convert2MethodRef
         KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
+
+    protected boolean isFirPlugin() {
+        return false;
+    }
 }
