@@ -29,6 +29,8 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
     private val heapDumpThreadService = Executors.newSingleThreadScheduledExecutor(THREAD_FACTORY)
     private var future: ScheduledFuture<*>? = null
 
+    override fun shouldContainTempFiles(): Boolean = false
+
     override fun setUp() {
         val allowedErrorDescription = setOf(
             "Unknown artifact type: war",
@@ -49,7 +51,7 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
         future =
             heapDumpThreadService.scheduleAtFixedRate(
                 {
-                    HeapDumper.dumpHeap("HighlightWholeProjectPerformanceTest")
+                    //HeapDumper.dumpHeap("HighlightWholeProjectPerformanceTest")
                 }, 2, 60, TimeUnit.MINUTES
             )
     }
@@ -63,17 +65,17 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
     fun testHighlightAllKtFilesInProject() {
         val emptyProfile = System.getProperty("emptyProfile", "false").toBoolean()
         val projectSpecs = projectSpecs()
-        suite(suiteName = "allKtFilesInProject") {
-            app {
-                warmUpProject()
+        for (projectSpec in projectSpecs) {
+            val projectName = projectSpec.name
+            val projectPath = projectSpec.path
+            suite("$projectName project") {
+                app {
+                    warmUpProject()
 
-                with(config) {
-                    warmup = 1
-                    iterations = 3
-                }
-                for (projectSpec in projectSpecs) {
-                    val projectName = projectSpec.name
-                    val projectPath = projectSpec.path
+                    with(config) {
+                        warmup = 1
+                        iterations = 3
+                    }
 
                     try {
                         project(ExternalProject(projectPath, ProjectOpenAction.GRADLE_PROJECT), refresh = true) {
@@ -108,16 +110,24 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
                                             }
                                         }
                                     }
-                                } catch (e: Exception) {
-                                    // nothing as it is already caught by perfTest
+                                } catch (e: Throwable) {
+                                    handle(e)
                                 }
                             }
                         }
-                    } catch (e: Exception) {
-                        // nothing as it is already caught by perfTest
+                    } catch (e: Throwable) {
+                        handle(e)
                     }
                 }
             }
+        }
+    }
+
+    private fun handle(e: Throwable) {
+        when (e) {
+            is Exception -> return // nothing as it is already caught by perfTest
+            is NoClassDefFoundError -> return // nothing as it is already caught by perfTest
+            else -> throw e
         }
     }
 
