@@ -104,7 +104,7 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
 
                                 try {
                                     fixture(fileName).use {
-                                        measure<List<HighlightInfo>>(fileName) {
+                                        measure<List<HighlightInfo>>("highlighting", fixture = it) {
                                             test = {
                                                 highlight(it)
                                             }

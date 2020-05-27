@@ -47,12 +47,11 @@ object TeamCity {
         try {
             block()
         } finally {
-            if (errorDetails != null) {
+            errorDetails?.let {
                 statValue(name, -1)
-                testFailed(name, errorDetails)
-            } else {
-                testFinished(name, durationMs)
+                testFailed(name, it)
             }
+            testFinished(name, durationMs)
         }
     }
 
