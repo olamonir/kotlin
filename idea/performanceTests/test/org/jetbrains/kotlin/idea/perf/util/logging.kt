@@ -26,6 +26,9 @@ fun logMessage(t: Throwable, message: () -> String) {
 
 object TeamCity {
     inline fun message(block: () -> String) {
+        // TODO: temp
+        println("--teamcity[${block()}]")
+
         println("##teamcity[${block()}]")
     }
 
