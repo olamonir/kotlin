@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.generator
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.inconsistencyChecker
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
@@ -16,7 +17,8 @@ class TestGroup(
     val testDataRoot: String,
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
-    val annotations: List<AnnotationModel> = emptyList()
+    val annotations: List<AnnotationModel> = emptyList(),
+    private val inconsistencyConsumer: (String) -> Unit = {}
 ) {
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
@@ -34,13 +36,17 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        TestGenerator(
+        val testGenerator = TestGenerator(
             testsRoot,
             suiteTestClassName,
             baseTestClassName,
             TestClass(annotations).apply(init).testModels,
             useJunit4
-        ).generateAndSave()
+        )
+        testGenerator.getFileNameIfContentChanged()?.let {
+            inconsistencyConsumer.invoke(it)
+        }
+        testGenerator.generateAndSave()
     }
 
     inner class TestClass(val annotations: List<AnnotationModel>) {
@@ -85,14 +91,68 @@ class TestGroup(
     }
 }
 
-fun testGroup(
-    testsRoot: String,
-    testDataRoot: String,
-    testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
-    additionalRunnerArguments: List<String> = emptyList(),
-    init: TestGroup.() -> Unit
+fun testGroupSuite(
+    args: Array<String>,
+    init: TestGroupSuite.() -> Unit
 ) {
-    TestGroup(testsRoot, testDataRoot, testRunnerMethodName, additionalRunnerArguments).init()
+    val checker = inconsistencyChecker(args)
+    testGroupSuite({ checker.add(it) }, init)
+}
+
+fun testGroupSuite(
+    inconsistencyConsumer: (String) -> Unit = {},
+    init: TestGroupSuite.() -> Unit
+) {
+    TestGroupSuite(inconsistencyConsumer).init()
+}
+
+class TestGroupSuite(private val inconsistencyConsumer: (String) -> Unit = {}) {
+    fun testGroup(
+        testsRoot: String,
+        testDataRoot: String,
+        testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
+        additionalRunnerArguments: List<String> = emptyList(),
+        init: TestGroup.() -> Unit
+    ) {
+        TestGroup(
+            testsRoot,
+            testDataRoot,
+            testRunnerMethodName,
+            additionalRunnerArguments,
+            inconsistencyConsumer = inconsistencyConsumer
+        ).init()
+    }
+}
+
+interface InconsistencyChecker {
+    fun add(affectedFile: String)
+
+    val affectedFiles: List<String>
+
+    companion object {
+        fun inconsistencyChecker(args: Array<String>) = inconsistencyChecker(args.any { it == "check" })
+
+        fun inconsistencyChecker(check: Boolean) = if (check) DefaultInconsistencyChecker else EmptyInconsistencyChecker
+    }
+}
+
+object DefaultInconsistencyChecker : InconsistencyChecker {
+    private val files = mutableListOf<String>()
+
+    override fun add(affectedFile: String) {
+        files.add(affectedFile)
+    }
+
+    override val affectedFiles: List<String>
+        get() = files
+}
+
+object EmptyInconsistencyChecker : InconsistencyChecker {
+    override fun add(affectedFile: String) {
+    }
+
+    override val affectedFiles: List<String>
+        get() = emptyList()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.tests.generator
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.Test
@@ -32,6 +31,7 @@ class TestGenerator(
     private val testClassModels: Collection<TestClassModel>
     private val useJunit4: Boolean
     private val testSourceFilePath: String
+    private var generatedCode: String? = null
 
     init {
         this.baseTestClassPackage = baseTestClassFqName.substringBeforeLast('.', "")
@@ -50,16 +50,38 @@ class TestGenerator(
 
     @Throws(IOException::class)
     fun generateAndSave() {
+        val out = generate()
+
+        val testSourceFile = File(testSourceFilePath)
+        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out, false)
+    }
+
+    @Throws(IOException::class)
+    fun getFileNameIfContentChanged(): String? {
+        val out = generate()
+
+        val testSourceFile = File(testSourceFilePath)
+        return if (GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, out)) {
+            testSourceFilePath
+        } else {
+            null
+        }
+
+    }
+
+    private fun generate(): String {
+        generatedCode?.let { return it }
+
         val out = StringBuilder()
         val p = Printer(out)
 
         val year = GregorianCalendar()[Calendar.YEAR]
         p.println(
             """/*
-            | * Copyright 2010-$year JetBrains s.r.o. and Kotlin Programming Language contributors.
-            | * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
-            | */
-            |""".trimMargin()
+                | * Copyright 2010-$year JetBrains s.r.o. and Kotlin Programming Language contributors.
+                | * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+                | */
+                |""".trimMargin()
         )
         p.println("package ", suiteClassPackage, ";")
         p.println()
@@ -126,9 +148,8 @@ class TestGenerator(
         }
 
         generateTestClass(p, model, false)
-
-        val testSourceFile = File(testSourceFilePath)
-        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out.toString(), false)
+        generatedCode = out.toString()
+        return generatedCode!!
     }
 
     private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isStatic: Boolean) {
