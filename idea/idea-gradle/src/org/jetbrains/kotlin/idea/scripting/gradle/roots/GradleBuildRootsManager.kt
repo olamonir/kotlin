@@ -180,9 +180,11 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         roots.getBuildByRootDir(gradleWorkingDir)
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
-        actualizeBuildRoot(workingDir)?.importing = inProgress
         updateNotifications(workingDir)
-        scriptConfigurationsAreUpToDate(project)
+
+        val buildRoot = actualizeBuildRoot(workingDir) ?: return
+        buildRoot.importing = inProgress
+        scriptConfigurationsAreUpToDate(buildRoot)
     }
 
     fun update(build: KotlinDslGradleBuildSync) {
@@ -206,7 +208,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
 
         add(newSupport)
 
-        scriptConfigurationsAreUpToDate(project)
+        scriptConfigurationsAreUpToDate(newSupport)
     }
 
     private fun merge(old: GradleBuildRootData, new: GradleBuildRootData): GradleBuildRootData {

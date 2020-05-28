@@ -50,13 +50,13 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     }
 
     private fun checkUpToDate(vFile: VirtualFile) {
-        val upToDate = GradleBuildRootsManager.getInstance(project)
-            .getScriptInfo(vFile)?.model?.inputs?.isUpToDate(project, vFile) ?: return
+        val scriptInfo = GradleBuildRootsManager.getInstance(project).getScriptInfo(vFile) ?: return
+        val upToDate = scriptInfo.model.inputs.isUpToDate(project, vFile)
 
         if (upToDate) {
-            scriptConfigurationsAreUpToDate(project)
+            scriptConfigurationsAreUpToDate(scriptInfo.buildRoot)
         } else {
-            scriptConfigurationsNeedToBeUpdated(project)
+            scriptConfigurationsNeedToBeUpdated(scriptInfo.buildRoot)
         }
     }
 }

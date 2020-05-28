@@ -62,7 +62,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
             root is GradleBuildRoot.New && !root.importing -> EditorNotificationPanel().apply {
                 text(getMissingConfigurationNotificationText())
                 createActionLabel(getMissingConfigurationActionText()) {
-                    runPartialGradleImport(project)
+                    runPartialGradleImport(root)
                 }
             }
             else -> null

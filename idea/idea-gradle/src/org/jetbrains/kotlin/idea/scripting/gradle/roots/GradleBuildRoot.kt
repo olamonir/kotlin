@@ -49,6 +49,9 @@ sealed class GradleBuildRoot {
         val dir: VirtualFile?
             get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
 
+        val project: Project
+            get() = manager.project
+
         private lateinit var lastModifiedFiles: LastModifiedFiles
 
         fun loadLastModifiedFiles() {
@@ -111,9 +114,6 @@ sealed class GradleBuildRoot {
         val javaHome: File?,
         val data: GradleBuildRootData
     ) : Linked() {
-        val project: Project
-            get() = manager.project
-
         override val projectRoots: Collection<String>
             get() = data.projectRoots
 
