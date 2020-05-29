@@ -43,10 +43,9 @@ class TestGroup(
             TestClass(annotations).apply(init).testModels,
             useJunit4
         )
-        testGenerator.getFileNameIfContentChanged()?.let {
-            inconsistencyConsumer.invoke(it)
+        if (testGenerator.generateAndSave()) {
+            inconsistencyConsumer.invoke(testGenerator.testSourceFilePath)
         }
-        testGenerator.generateAndSave()
     }
 
     inner class TestClass(val annotations: List<AnnotationModel>) {

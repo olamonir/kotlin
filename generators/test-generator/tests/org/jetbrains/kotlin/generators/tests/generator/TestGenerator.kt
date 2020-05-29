@@ -30,8 +30,7 @@ class TestGenerator(
     private val baseTestClassName: String
     private val testClassModels: Collection<TestClassModel>
     private val useJunit4: Boolean
-    private val testSourceFilePath: String
-    private var generatedCode: String? = null
+    internal val testSourceFilePath: String
 
     init {
         this.baseTestClassPackage = baseTestClassFqName.substringBeforeLast('.', "")
@@ -48,30 +47,18 @@ class TestGenerator(
         }
     }
 
+    /**
+     * @return true if a new file has been generated
+     */
     @Throws(IOException::class)
-    fun generateAndSave() {
-        val out = generate()
+    fun generateAndSave(): Boolean {
+        val generatedCode = generate()
 
         val testSourceFile = File(testSourceFilePath)
-        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out, false)
-    }
-
-    @Throws(IOException::class)
-    fun getFileNameIfContentChanged(): String? {
-        val out = generate()
-
-        val testSourceFile = File(testSourceFilePath)
-        return if (GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, out)) {
-            testSourceFilePath
-        } else {
-            null
-        }
-
+        return GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
     }
 
     private fun generate(): String {
-        generatedCode?.let { return it }
-
         val out = StringBuilder()
         val p = Printer(out)
 
@@ -148,8 +135,7 @@ class TestGenerator(
         }
 
         generateTestClass(p, model, false)
-        generatedCode = out.toString()
-        return generatedCode!!
+        return out.toString()
     }
 
     private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isStatic: Boolean) {

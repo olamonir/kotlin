@@ -12,10 +12,13 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 object GeneratorsFileUtil {
+    /**
+     * @return true if a file content has been changed and rewritten
+     */
     @JvmStatic
     @JvmOverloads
     @Throws(IOException::class)
-    fun writeFileIfContentChanged(file: File, newText: String, logNotChanged: Boolean = true) {
+    fun writeFileIfContentChanged(file: File, newText: String, logNotChanged: Boolean = true): Boolean {
         val parentFile = file.parentFile
         if (!parentFile.exists()) {
             if (parentFile.mkdirs()) {
@@ -28,7 +31,7 @@ object GeneratorsFileUtil {
             if (logNotChanged) {
                 println("Not changed: " + file.absolutePath)
             }
-            return
+            return false
         }
         val useTempFile = !SystemInfo.isWindows
         val tempFile =
@@ -40,6 +43,8 @@ object GeneratorsFileUtil {
             println("Renamed $tempFile to $file")
         }
         println()
+
+        return true
     }
 
     fun isFileContentChangedIgnoringLineSeparators(file: File, content: String): Boolean {
