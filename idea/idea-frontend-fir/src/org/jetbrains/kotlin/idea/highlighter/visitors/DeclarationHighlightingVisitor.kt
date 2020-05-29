@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.psi.util.elementType
+import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -46,7 +46,7 @@ internal class DeclarationHighlightingVisitor(holder: AnnotationHolder) : Highli
 
 
     private fun <D> highlightMutability(declaration: D) where D : KtValVarKeywordOwner, D : KtNamedDeclaration {
-        if (declaration.valOrVarKeyword?.elementType == KtTokens.VAR_KEYWORD) {
+        if (PsiUtilCore.getElementType(declaration.valOrVarKeyword) == KtTokens.VAR_KEYWORD) {
             highlightNamedDeclaration(declaration, Colors.MUTABLE_VARIABLE)
         }
     }
