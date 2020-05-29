@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiVariable
-import com.intellij.psi.util.elementType
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
@@ -61,7 +61,7 @@ internal class VariableReferenceHighlightingVisitor(
 }
 
 private fun PsiElement.isMutableVariable() = when {
-    this is KtValVarKeywordOwner && valOrVarKeyword?.elementType == KtTokens.VAR_KEYWORD -> true
+    this is KtValVarKeywordOwner && PsiUtilCore.getElementType(valOrVarKeyword) == KtTokens.VAR_KEYWORD -> true
     this is PsiVariable && !hasModifierProperty(PsiModifier.FINAL) -> true
     else -> false
 }
