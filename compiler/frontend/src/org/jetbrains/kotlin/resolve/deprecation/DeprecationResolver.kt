@@ -44,46 +44,8 @@ class DeprecationResolver(
     private val deprecationSettings: DeprecationSettings,
     private val moduleDescriptor: ModuleDescriptor? = null,
 ) {
-    private val deprecations = storageManager.createMemoizedFunction(::doGetDeprecations)
-    private val deprecationsForeignModules = storageManager.createMemoizedFunction(::doGetDeprecations)
-    private val isHiddenBecauseOfKotlinVersionAccessibility = storageManager.createMemoizedFunction(::doCheckHiddenKotlinVersion)
-    private val isHiddenBecauseOfKotlinVersionAccessibilityForeignModules =
-        storageManager.createMemoizedFunction(::doCheckHiddenKotlinVersion)
-
-    private fun doGetDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> {
-        val deprecations = descriptor.getOwnDeprecations()
-        return when {
-            deprecations.isNotEmpty() -> deprecations
-            descriptor is CallableMemberDescriptor -> listOfNotNull(deprecationByOverridden(descriptor))
-            else -> emptyList()
-        }
-    }
-
-    private fun doCheckHiddenKotlinVersion(descriptor: DeclarationDescriptor): SinceKotlinAccessibility =
-        descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
-
     fun getDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> =
         memoizeBasedOnContainingModule(descriptor, deprecations, deprecationsForeignModules)
-
-    private fun getSinceKotlinAccessibility(descriptor: DeclarationDescriptor): SinceKotlinAccessibility =
-        memoizeBasedOnContainingModule(
-            descriptor,
-            isHiddenBecauseOfKotlinVersionAccessibility,
-            isHiddenBecauseOfKotlinVersionAccessibilityForeignModules
-        )
-
-    private fun <R : Any> memoizeBasedOnContainingModule(
-        descriptor: DeclarationDescriptor,
-        forSameModule: MemoizedFunctionToNotNull<DeclarationDescriptor, R>,
-        forDifferentModule: MemoizedFunctionToNotNull<DeclarationDescriptor, R>,
-    ): R {
-        descriptor.original.let { originalDescriptor ->
-            return if (moduleDescriptor == null || originalDescriptor.module == moduleDescriptor)
-                forSameModule(originalDescriptor)
-            else
-                forDifferentModule(originalDescriptor)
-        }
-    }
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
         getDeprecations(descriptor).any { it.deprecationLevel == DeprecationLevelValue.HIDDEN }
@@ -116,6 +78,45 @@ class DeprecationResolver(
         }
 
         return isDeprecatedHidden(descriptor)
+    }
+
+    private val deprecations = storageManager.createMemoizedFunction(::doGetDeprecations)
+    private val isHiddenBecauseOfKotlinVersionAccessibility = storageManager.createMemoizedFunction(::doCheckHiddenKotlinVersion)
+
+    private val deprecationsForeignModules = storageManager.createMemoizedFunction(::doGetDeprecations, newConcurrentHashMapWithWeakKeys())
+    private val isHiddenBecauseOfKotlinVersionAccessibilityForeignModules =
+        storageManager.createMemoizedFunction(::doCheckHiddenKotlinVersion, newConcurrentHashMapWithWeakKeys())
+
+    private fun doGetDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> {
+        val deprecations = descriptor.getOwnDeprecations()
+        return when {
+            deprecations.isNotEmpty() -> deprecations
+            descriptor is CallableMemberDescriptor -> listOfNotNull(deprecationByOverridden(descriptor))
+            else -> emptyList()
+        }
+    }
+
+    private fun doCheckHiddenKotlinVersion(descriptor: DeclarationDescriptor): SinceKotlinAccessibility =
+        descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
+
+    private fun getSinceKotlinAccessibility(descriptor: DeclarationDescriptor): SinceKotlinAccessibility =
+        memoizeBasedOnContainingModule(
+            descriptor,
+            isHiddenBecauseOfKotlinVersionAccessibility,
+            isHiddenBecauseOfKotlinVersionAccessibilityForeignModules
+        )
+
+    private fun <R : Any> memoizeBasedOnContainingModule(
+        descriptor: DeclarationDescriptor,
+        forSameModule: MemoizedFunctionToNotNull<DeclarationDescriptor, R>,
+        forDifferentModule: MemoizedFunctionToNotNull<DeclarationDescriptor, R>,
+    ): R {
+        descriptor.original.let { originalDescriptor ->
+            return if (moduleDescriptor == null || originalDescriptor.module == moduleDescriptor)
+                forSameModule(originalDescriptor)
+            else
+                forDifferentModule(originalDescriptor)
+        }
     }
 
     private fun KotlinType.deprecationsByConstituentTypes(): List<Deprecation> =
@@ -309,3 +310,4 @@ class DeprecationResolver(
 
 private fun <K, V> newConcurrentHashMapWithWeakKeys(): ConcurrentMap<K, V> =
     MapMaker().concurrencyLevel(2).initialCapacity(3).weakKeys().makeMap()
+

@@ -264,7 +264,7 @@ class KotlinIndicesHelper(
     fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
         return KotlinClassShortNameIndex.getInstance()[name, project, scope]
             .filter { it is KtEnumEntry && it in scope }
-            .mapNotNull { it.unsafeResolveToDescriptor() }
+            .mapNotNull { it.unsafeResolveToDescriptor(resolutionFacade) }
             .filter(descriptorFilter)
             .toSet()
     }
@@ -487,7 +487,7 @@ class KotlinIndicesHelper(
             for (field in shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
-                val descriptor = field.getJavaMemberDescriptor() ?: continue
+                val descriptor = field.getJavaMemberDescriptor(resolutionFacade) ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
                 }
