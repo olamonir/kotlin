@@ -1,3 +1,5 @@
+// MODE: inheritors
+
 <# block [ 2 Inheritors] #>
 abstract class SomeClass {
 <# block [     1 Override] #>

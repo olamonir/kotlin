@@ -1,3 +1,5 @@
+// MODE: usages
+
 <# block [ 5 Usages] #>
 interface SomeInterface {}
 interface SomeOtherInterface : SomeInterface {} // <== (1): interface extension

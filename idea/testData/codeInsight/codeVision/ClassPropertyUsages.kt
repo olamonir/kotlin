@@ -1,3 +1,5 @@
+// MODE: usages
+
 <# block [ 1 Usage] #>
 interface SomeClass {
 <# block [     3 Usages] #>

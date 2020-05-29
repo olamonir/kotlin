@@ -1,3 +1,5 @@
+// MODE: usages
+
 <# block [ 5 Usages] #>
 open class SomeClass {}
 class SomeOtherClass : SomeClass {} // <== (1): class extension

@@ -1,3 +1,5 @@
+// MODE: inheritors
+
 <# block [ 3 Implementations] #>
 interface SomeInterface {}
 interface SomeOtherInterface : SomeInterface {} // <== (1): interface extension

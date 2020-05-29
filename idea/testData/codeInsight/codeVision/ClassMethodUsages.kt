@@ -1,3 +1,5 @@
+// MODE: usages
+
 <# block [ 1 Usage] #>
 abstract class SomeClass {
 <# block [     3 Usages] #>

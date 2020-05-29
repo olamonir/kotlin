@@ -1,3 +1,5 @@
+// MODE: inheritors
+
 <# block [ 1 Implementation] #>
 interface SomeInterface {
 <# block [     1 Override] #>
