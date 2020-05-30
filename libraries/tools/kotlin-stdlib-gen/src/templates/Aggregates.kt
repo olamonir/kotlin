@@ -571,8 +571,7 @@ object Aggregates : TemplateGroupBase() {
                 val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
                 val acc = op + "Value"
                 val cmpBlock = if (isFloat)
-                    """$acc = ${op}Of($acc, v)
-                        if ($acc.isNaN()) break"""
+                    """$acc = ${op}Of($acc, v)"""
                 else
                     """if ($acc ${if (op == "max") "<" else ">"} v) {
                             $acc = v

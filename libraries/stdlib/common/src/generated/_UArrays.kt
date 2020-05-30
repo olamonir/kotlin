@@ -5889,7 +5889,6 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -5913,7 +5912,6 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -5937,7 +5935,6 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -5961,7 +5958,6 @@ public inline fun UShortArray.maxOf(selector: (UShort) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -5985,7 +5981,6 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6009,7 +6004,6 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6033,7 +6027,6 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6057,7 +6050,6 @@ public inline fun UShortArray.maxOf(selector: (UShort) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6171,7 +6163,6 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6193,7 +6184,6 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6215,7 +6205,6 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6237,7 +6226,6 @@ public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Double): Double?
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6259,7 +6247,6 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6281,7 +6268,6 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6303,7 +6289,6 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6325,7 +6310,6 @@ public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -6829,7 +6813,6 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6853,7 +6836,6 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6877,7 +6859,6 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6901,7 +6882,6 @@ public inline fun UShortArray.minOf(selector: (UShort) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6925,7 +6905,6 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6949,7 +6928,6 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6973,7 +6951,6 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -6997,7 +6974,6 @@ public inline fun UShortArray.minOf(selector: (UShort) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7111,7 +7087,6 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7133,7 +7108,6 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7155,7 +7129,6 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Double): Double? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7177,7 +7150,6 @@ public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Double): Double?
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7199,7 +7171,6 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7221,7 +7192,6 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7243,7 +7213,6 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -7265,7 +7234,6 @@ public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }

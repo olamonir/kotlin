@@ -1141,7 +1141,6 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1164,7 +1163,6 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1207,7 +1205,6 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1228,7 +1225,6 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1361,7 +1357,6 @@ public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -1384,7 +1379,6 @@ public inline fun CharSequence.minOf(selector: (Char) -> Float): Float {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -1427,7 +1421,6 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -1448,7 +1441,6 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Float): Float? {
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }

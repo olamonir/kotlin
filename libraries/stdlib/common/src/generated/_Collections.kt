@@ -1808,7 +1808,6 @@ public inline fun <T> Iterable<T>.maxOf(selector: (T) -> Double): Double {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1832,7 +1831,6 @@ public inline fun <T> Iterable<T>.maxOf(selector: (T) -> Float): Float {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1877,7 +1875,6 @@ public inline fun <T> Iterable<T>.maxOfOrNull(selector: (T) -> Double): Double? 
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -1899,7 +1896,6 @@ public inline fun <T> Iterable<T>.maxOfOrNull(selector: (T) -> Float): Float? {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         maxValue = maxOf(maxValue, v)
-        if (maxValue.isNaN()) break
     }
     return maxValue
 }
@@ -2072,7 +2068,6 @@ public inline fun <T> Iterable<T>.minOf(selector: (T) -> Double): Double {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -2096,7 +2091,6 @@ public inline fun <T> Iterable<T>.minOf(selector: (T) -> Float): Float {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -2141,7 +2135,6 @@ public inline fun <T> Iterable<T>.minOfOrNull(selector: (T) -> Double): Double? 
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
@@ -2163,7 +2156,6 @@ public inline fun <T> Iterable<T>.minOfOrNull(selector: (T) -> Float): Float? {
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         minValue = minOf(minValue, v)
-        if (minValue.isNaN()) break
     }
     return minValue
 }
