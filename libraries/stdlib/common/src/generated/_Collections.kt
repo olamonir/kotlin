@@ -1732,7 +1732,6 @@ public fun Iterable<Double>.max(): Double? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -1750,7 +1749,6 @@ public fun Iterable<Float>.max(): Float? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -1998,7 +1996,6 @@ public fun Iterable<Double>.min(): Double? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }
@@ -2016,7 +2013,6 @@ public fun Iterable<Float>.min(): Float? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }

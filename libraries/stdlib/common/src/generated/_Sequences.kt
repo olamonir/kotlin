@@ -1181,7 +1181,6 @@ public fun Sequence<Double>.max(): Double? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -1201,7 +1200,6 @@ public fun Sequence<Float>.max(): Float? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -1473,7 +1471,6 @@ public fun Sequence<Double>.min(): Double? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }
@@ -1493,7 +1490,6 @@ public fun Sequence<Float>.min(): Float? {
     while (iterator.hasNext()) {
         val e = iterator.next()
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }

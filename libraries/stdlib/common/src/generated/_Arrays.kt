@@ -13087,7 +13087,6 @@ public fun Array<out Double>.max(): Double? {
     for (i in 1..lastIndex) {
         val e = this[i]
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -13104,7 +13103,6 @@ public fun Array<out Float>.max(): Float? {
     for (i in 1..lastIndex) {
         val e = this[i]
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -13185,7 +13183,6 @@ public fun FloatArray.max(): Float? {
     for (i in 1..lastIndex) {
         val e = this[i]
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -13201,7 +13198,6 @@ public fun DoubleArray.max(): Double? {
     for (i in 1..lastIndex) {
         val e = this[i]
         max = maxOf(max, e)
-        if (max.isNaN()) break
     }
     return max
 }
@@ -15094,7 +15090,6 @@ public fun Array<out Double>.min(): Double? {
     for (i in 1..lastIndex) {
         val e = this[i]
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }
@@ -15111,7 +15106,6 @@ public fun Array<out Float>.min(): Float? {
     for (i in 1..lastIndex) {
         val e = this[i]
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }
@@ -15192,7 +15186,6 @@ public fun FloatArray.min(): Float? {
     for (i in 1..lastIndex) {
         val e = this[i]
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }
@@ -15208,7 +15201,6 @@ public fun DoubleArray.min(): Double? {
     for (i in 1..lastIndex) {
         val e = this[i]
         min = minOf(min, e)
-        if (min.isNaN()) break
     }
     return min
 }

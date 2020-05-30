@@ -331,8 +331,7 @@ object Aggregates : TemplateGroupBase() {
 
                 val acc = op
                 val cmpBlock = if (isFloat)
-                    """$acc = ${op}Of($acc, e)
-                        if ($acc.isNaN()) break"""
+                    """$acc = ${op}Of($acc, e)"""
                 else
                     """if ($acc ${if (op == "max") "<" else ">"} e) $acc = e"""
                 body {
