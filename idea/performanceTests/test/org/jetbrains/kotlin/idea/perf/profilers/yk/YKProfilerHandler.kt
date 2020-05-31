@@ -40,12 +40,12 @@ class YKProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
         if (profilerConfig.tracing)
             startTracingMethod.invoke(controller, null)
         else
-            startCPUSamplingMethod.invoke(controller, null)
+            startSamplingMethod.invoke(controller, null)
     }
 
     override fun stopProfiling(attempt: Int) {
         val pathToSnapshot = captureSnapshotMethod.invoke(controller, SNAPSHOT_WITHOUT_HEAP) as String
-        stopCPUProfilingMethod.invoke(controller)
+        stopCpuProfilingMethod.invoke(controller)
         val dumpPath = Paths.get(pathToSnapshot)
         if (!this::phasePath.isInitialized)
             phasePath = determinePhasePath(dumpPath, profilerConfig)
@@ -60,9 +60,9 @@ class YKProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
         private val ykLibClass: Class<*> = doOrThrow("yjp-controller-api-redist.jar is not in a classpath") {
             Class.forName("com.yourkit.api.Controller")
         }
-        private val startCPUSamplingMethod: Method = doOrThrow("com.yourkit.api.Controller#startCPUSampling(String) not found") {
+        private val startSamplingMethod: Method = doOrThrow("com.yourkit.api.Controller#startCPUSampling(String) not found") {
             ykLibClass.getMethod(
-                "startCPUSampling",
+                "startSampling",
                 String::class.java
             )
         }
@@ -84,8 +84,8 @@ class YKProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
                 ykLibClass.getMethod("capturePerformanceSnapshot")
             }
 
-        private val stopCPUProfilingMethod: Method = doOrThrow("com.yourkit.api.Controller#stopCPUProfiling() not found") {
-            ykLibClass.getMethod("stopCPUProfiling")
+        private val stopCpuProfilingMethod: Method = doOrThrow("com.yourkit.api.Controller#stopCPUProfiling() not found") {
+            ykLibClass.getMethod("stopCpuProfiling")
         }
     }
 }

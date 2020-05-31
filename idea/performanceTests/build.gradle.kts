@@ -80,14 +80,17 @@ projectTest(taskName = "performanceTest") {
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
+    jvmArgs?.removeAll { it.startsWith("-XX:ReservedCodeCacheSize") }
 
     maxHeapSize = "3g"
     jvmArgs("-Didea.debug.mode=true")
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+
     jvmArgs(
-        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:ReservedCodeCacheSize=400m",
         "-XX:+UseCompressedOops",
-        "-XX:+UseConcMarkSweepGC"
+        "-XX:+UseConcMarkSweepGC",
+        "-Didea.ProcessCanceledException=disabled"
     )
 
     System.getenv("YOURKIT_PROFILER_HOME")?.let {yourKitHome ->
@@ -97,7 +100,7 @@ projectTest(taskName = "performanceTest") {
                 classpath += files("$yourKitHome/lib/yjp-controller-api-redist.jar")
             }
             currentOs.isMacOsX -> {
-                jvmArgs("-agentpath:$yourKitHome/Contents/Resources/bin/mac/libyjpagent.dylib")
+                jvmArgs("-agentpath:$yourKitHome/Contents/Resources/bin/mac/libyjpagent.dylib=delay=5000,_socket_timeout_ms=120000,disablealloc,disable_async_sampling,disablenatives")
                 classpath += files("$yourKitHome/Contents/Resources/lib/yjp-controller-api-redist.jar")
             }
         }
