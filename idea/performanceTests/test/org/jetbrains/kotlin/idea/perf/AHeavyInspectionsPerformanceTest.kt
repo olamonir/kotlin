@@ -51,4 +51,60 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
             }
         }
     }
+
+    fun testUnusedSymbolLocalInspection() {
+        suite {
+            config.warmup = 1
+            config.iterations = 2
+            config.profile = true
+            config.profilerConfig.tracing = true
+            app {
+                project(ExternalProject.KOTLIN_AUTO) {
+                    for (inspection in listOfInspections.sliceArray(0..1)) {
+                        enableSingleInspection(inspection)
+                        for (file in listOfFiles.sliceArray(0..1)) {
+                            val editorFile = editor(file)
+
+                            measure<List<HighlightInfo>>(inspection, file.lastPathSegment()) {
+                                test = {
+                                    highlight(editorFile)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    val UNUSED_AUTO = ExternalProject(
+        "../unused",
+        ExternalProject.autoOpenAction("../unused")
+    )
+
+    fun testSingleInspection1() {
+        suite {
+            config.warmup = 0
+            config.iterations = 1
+            config.profile = true
+            config.profilerConfig.tracing = true
+            app {
+                project(UNUSED_AUTO) {
+                    for (inspection in listOfInspections.sliceArray(0..1)) {
+                        enableSingleInspection(inspection)
+                        val listOfFiles = listOf("src/main/kotlin/org/test/test.kt")
+                        for (file in listOfFiles) {
+                            val editorFile = editor(file)
+
+                            measure<List<HighlightInfo>>(inspection, file.lastPathSegment()) {
+                                test = {
+                                    highlight(editorFile)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
