@@ -7698,7 +7698,7 @@ public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int
     return runningFoldIndexed(initial, operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7707,7 +7707,7 @@ public inline fun UIntArray.scanReduce(operation: (acc: UInt, UInt) -> UInt): Li
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7716,7 +7716,7 @@ public inline fun ULongArray.scanReduce(operation: (acc: ULong, ULong) -> ULong)
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7725,7 +7725,7 @@ public inline fun UByteArray.scanReduce(operation: (acc: UByte, UByte) -> UByte)
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7734,7 +7734,7 @@ public inline fun UShortArray.scanReduce(operation: (acc: UShort, UShort) -> USh
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7743,7 +7743,7 @@ public inline fun UIntArray.scanReduceIndexed(operation: (index: Int, acc: UInt,
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7752,7 +7752,7 @@ public inline fun ULongArray.scanReduceIndexed(operation: (index: Int, acc: ULon
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
@@ -7761,7 +7761,7 @@ public inline fun UByteArray.scanReduceIndexed(operation: (index: Int, acc: UByt
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @ExperimentalUnsignedTypes

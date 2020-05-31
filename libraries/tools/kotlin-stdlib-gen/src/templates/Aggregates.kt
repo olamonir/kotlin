@@ -1627,7 +1627,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
 
         specialFor(CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1642,7 +1642,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
 
         specialFor(CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1657,7 +1657,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 
@@ -1674,7 +1674,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 
