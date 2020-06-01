@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.returnType
+import org.jetbrains.kotlin.fir.resolve.propagateTypeFromQualifiedAccessAfterNullCheck
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
@@ -59,7 +60,8 @@ class FirCallCompletionResultsWriterTransformer(
         val typeRef = if (declaration is FirTypedDeclaration) {
             typeCalculator.tryCalculateReturnType(declaration).let {
                 if (qualifiedAccess.safe) {
-                    val nullableType = it.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
+                    val nullableType =
+                        it.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
                     it.withReplacedConeType(nullableType)
                 } else {
                     it
@@ -203,6 +205,22 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         return withReplacedConeType(finalType)
+    }
+
+    override fun transformSafeCallExpression(
+        safeCallExpression: FirSafeCallExpression,
+        data: ExpectedArgumentType?
+    ): CompositeTransformResult<FirStatement> {
+        safeCallExpression.regularQualifiedAccess.transform<FirExpression, ExpectedArgumentType?>(
+            this,
+            data?.getExpectedType(
+                safeCallExpression
+            )?.toExpectedType()
+        )
+
+        safeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(safeCallExpression.receiver, session)
+
+        return safeCallExpression.compose()
     }
 
     override fun transformCallableReferenceAccess(
