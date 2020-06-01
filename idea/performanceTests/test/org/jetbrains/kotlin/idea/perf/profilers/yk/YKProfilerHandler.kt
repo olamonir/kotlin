@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler.Companion.determinePhasePath
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.perf.util.logMessage
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.lang.management.ManagementFactory
 import java.lang.reflect.Method
 import java.nio.file.Files
@@ -37,10 +39,16 @@ class YKProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
     }
 
     override fun startProfiling() {
-        if (profilerConfig.tracing)
-            startTracingMethod.invoke(controller, null)
-        else
-            startSamplingMethod.invoke(controller, null)
+        try {
+            if (profilerConfig.tracing) {
+                startTracingMethod.invoke(controller, null)
+            } else {
+                startSamplingMethod.invoke(controller, null)
+            }
+        } catch (e: Exception) {
+            val stringWriter = StringWriter().also { e.printStackTrace(PrintWriter(it)) }
+            logMessage { "exception while starting profile ${e.localizedMessage} $stringWriter" }
+        }
     }
 
     override fun stopProfiling(attempt: Int) {

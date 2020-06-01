@@ -139,7 +139,6 @@ class PerformanceSuite {
                 tearDown {
                     after?.invoke()
                 }
-                profilerEnabled(config.profile)
                 profilerConfig(config.profilerConfig)
             }
             return value
@@ -216,7 +215,7 @@ class PerformanceSuite {
     }
 
 
-    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profile: Boolean = false, var profilerConfig: ProfilerConfig = ProfilerConfig())
+    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profilerConfig: ProfilerConfig = ProfilerConfig())
 
     class ProjectScopeConfig(val path: String, val openWith: ProjectOpenAction, val refresh: Boolean = false) {
         val name: String = path.lastPathSegment()

@@ -31,4 +31,4 @@ class ActualPhaseProfiler(
     }
 }
 
-data class ProfilerConfig(var path: String = "", var name: String = "", var tracing: Boolean = false, var options: List<String> = emptyList())
+data class ProfilerConfig(var enabled: Boolean = false, var path: String = "", var name: String = "", var tracing: Boolean = false, var options: List<String> = emptyList(), var warmup: Boolean = false)

@@ -80,13 +80,9 @@ projectTest(taskName = "performanceTest") {
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
-    jvmArgs?.removeAll { it.startsWith("-XX:ReservedCodeCacheSize") }
 
     maxHeapSize = "3g"
     jvmArgs(
-        "-XX:ReservedCodeCacheSize=400m",
-        "-XX:+UseCompressedOops",
-        "-XX:+UseConcMarkSweepGC",
         "-Didea.ProcessCanceledException=disabled"
     )
 
@@ -128,12 +124,10 @@ projectTest(taskName = "wholeProjectsPerformanceTest") {
     jvmArgs("-DperformanceProjects=${System.getProperty("performanceProjects")}")
     jvmArgs("-Didea.debug.mode=true")
     jvmArgs("-DemptyProfile=${System.getProperty("emptyProfile")}")
-    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
-    jvmArgs(
-        "-XX:ReservedCodeCacheSize=240m",
-        "-XX:+UseCompressedOops",
-        "-XX:+UseConcMarkSweepGC"
-    )
+//    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50") // to use user's default options
+//    jvmArgs(
+//        "-XX:+UseConcMarkSweepGC" // to use the user's default, CMS is not a default option
+//    )
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)

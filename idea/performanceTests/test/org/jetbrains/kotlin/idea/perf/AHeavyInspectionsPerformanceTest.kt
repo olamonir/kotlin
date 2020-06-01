@@ -56,7 +56,7 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
         suite {
             config.warmup = 1
             config.iterations = 2
-            config.profile = true
+            config.profilerConfig.enabled = true
             config.profilerConfig.tracing = true
             app {
                 project(ExternalProject.KOTLIN_AUTO) {
@@ -86,7 +86,7 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
         suite {
             config.warmup = 0
             config.iterations = 1
-            config.profile = true
+            config.profilerConfig.enabled = true
             config.profilerConfig.tracing = true
             app {
                 project(UNUSED_AUTO) {
