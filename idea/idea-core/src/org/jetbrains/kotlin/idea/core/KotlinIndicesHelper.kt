@@ -26,6 +26,7 @@ import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
@@ -62,9 +63,9 @@ import java.util.*
 class KotlinIndicesHelper(
     private val resolutionFacade: ResolutionFacade,
     private val scope: GlobalSearchScope,
-    visibilityFilter: (DeclarationDescriptor) -> Boolean,
+    private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
     private val declarationTranslator: (KtDeclaration) -> KtDeclaration? = { it },
-    applyExcludeSettings: Boolean = true,
+    private val applyExcludeSettings: Boolean = true,
     private val filterOutPrivate: Boolean = true,
     private val file: KtFile? = null
 ) {
@@ -73,11 +74,11 @@ class KotlinIndicesHelper(
     private val project = resolutionFacade.project
     private val scopeWithoutKotlin = scope.excludeKotlinSources() as GlobalSearchScope
 
-    private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@{
-        if (resolutionFacade.frontendService<DeprecationResolver>().isHiddenInResolution(it)) return@filter false
-        if (!visibilityFilter(it)) return@filter false
-        if (applyExcludeSettings && it.isExcludedFromAutoImport(project, file)) return@filter false
-        true
+    private fun descriptorFilter(declarationDescriptor: DeclarationDescriptor, facade: ResolutionFacade? = null): Boolean {
+        if ((facade ?: resolutionFacade).frontendService<DeprecationResolver>().isHiddenInResolution(declarationDescriptor)) return false
+        if (!visibilityFilter(declarationDescriptor)) return false
+        if (applyExcludeSettings && declarationDescriptor.isExcludedFromAutoImport(project, file)) return false
+        return true
     }
 
     fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
@@ -257,15 +258,20 @@ class KotlinIndicesHelper(
         return PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
             .filter { it in scope && it.containingFile != null }
             .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
-            .filter(descriptorFilter)
+            .filter { descriptorFilter(it) }
             .toSet()
     }
 
     fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
         return KotlinClassShortNameIndex.getInstance()[name, project, scope]
             .filter { it is KtEnumEntry && it in scope }
-            .mapNotNull { it.unsafeResolveToDescriptor(resolutionFacade) }
-            .filter(descriptorFilter)
+            .mapNotNull {
+                val resolutionFacade = it.getResolutionFacade()
+                val resultingDescriptor = it.unsafeResolveToDescriptor(resolutionFacade)
+                if (descriptorFilter(resultingDescriptor, resolutionFacade))
+                    resultingDescriptor
+                else null
+            }
             .toSet()
     }
 
@@ -407,7 +413,9 @@ class KotlinIndicesHelper(
                     .flatMap { it.resolveToDescriptors<TypeAliasDescriptor>() }
 
             }
-            .filter(descriptorFilter)
+            .filter {
+                descriptorFilter(it)
+            }
     }
 
     fun processObjectMembers(
