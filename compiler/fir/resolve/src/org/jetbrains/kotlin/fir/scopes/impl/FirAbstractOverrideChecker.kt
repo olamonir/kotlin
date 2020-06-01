@@ -16,6 +16,13 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
     protected abstract fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean
 
+    protected abstract fun isEqualBound(
+        overrideBound: FirTypeRef,
+        baseBound: FirTypeRef,
+        baseDeclaration: FirTypeParameter,
+        substitutor: ConeSubstitutor
+    ): Boolean
+
     private fun isCompatibleTypeParameters(
         overrideCandidate: FirTypeParameterRef,
         baseDeclaration: FirTypeParameterRef,
@@ -23,7 +30,8 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
     ): Boolean {
         if (overrideCandidate.symbol == baseDeclaration.symbol) return true
         if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
-        return overrideCandidate.bounds.zip(baseDeclaration.bounds).all { (aBound, bBound) -> isEqualTypes(aBound, bBound, substitutor) }
+        return overrideCandidate.bounds.zip(baseDeclaration.bounds)
+            .all { (aBound, bBound) -> isEqualBound(aBound, bBound, baseDeclaration, substitutor) }
     }
 
     protected fun getSubstitutorIfTypeParametersAreCompatible(

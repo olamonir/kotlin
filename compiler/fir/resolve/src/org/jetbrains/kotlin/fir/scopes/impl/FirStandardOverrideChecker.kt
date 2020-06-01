@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -20,9 +22,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
 
     private val context: ConeTypeContext = session.typeContext
 
-    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
-        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
-        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+    private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
         return with(context) {
             val baseIsFlexible = substitutedBaseType.isFlexible()
             val candidateIsFlexible = substitutedCandidateType.isFlexible()
@@ -45,8 +45,30 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         }
     }
 
+    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+        return isEqualTypes(substitutedCandidateType, substitutedBaseType)
+    }
+
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes((candidateTypeRef as FirResolvedTypeRef).type, (baseTypeRef as FirResolvedTypeRef).type, substitutor)
+
+
+    override fun isEqualBound(
+        overrideBound: FirTypeRef,
+        baseBound: FirTypeRef,
+        baseDeclaration: FirTypeParameter,
+        substitutor: ConeSubstitutor
+    ): Boolean {
+        val substitutedOverrideType = substitutor.substituteOrSelf(overrideBound.coneTypeUnsafe())
+        val substitutedBaseType = substitutor.substituteOrSelf(baseBound.coneTypeUnsafe())
+
+        if (isEqualTypes(substitutedOverrideType, substitutedBaseType)) return true
+
+        val typeParameterType = ConeTypeParameterTypeImpl(baseDeclaration.symbol.toLookupTag(), isNullable = false)
+        return AbstractTypeChecker.isSubtypeOf(context, typeParameterType, substitutedOverrideType)
+    }
 
     private fun isEqualReceiverTypes(candidateTypeRef: FirTypeRef?, baseTypeRef: FirTypeRef?, substitutor: ConeSubstitutor): Boolean {
         return when {

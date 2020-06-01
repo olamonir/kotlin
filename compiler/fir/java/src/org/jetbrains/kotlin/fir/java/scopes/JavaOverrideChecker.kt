@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
@@ -18,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
@@ -53,6 +51,20 @@ class JavaOverrideChecker internal constructor(
             baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
             substitutor
         )
+
+    override fun isEqualBound(
+        overrideBound: FirTypeRef,
+        baseBound: FirTypeRef,
+        baseDeclaration: FirTypeParameter,
+        substitutor: ConeSubstitutor
+    ): Boolean {
+        val substitutedOverrideBound = substitutor.substituteOrSelf(overrideBound.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack))
+        val substitutedBaseBound = substitutor.substituteOrSelf(baseBound.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack))
+        if (AbstractTypeChecker.equalTypes(context, substitutedOverrideBound, substitutedBaseBound)) return true
+        val intersection =
+            ConeIntersectionType(baseDeclaration.bounds.map { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) })
+        return AbstractTypeChecker.isSubtypeOf(context, intersection, substitutedOverrideBound)
+    }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
         // NB: overrideCandidate is from Java and has no receiver
